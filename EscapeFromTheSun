@@ -1,0 +1,77 @@
+from numpy.random import random as rnd # we want them random numbers
+import numpy as np # for the math functions
+import matplotlib.pyplot as plt # to make pretty pretty class
+
+mass_proton = 1.67e-27
+mass_electron = 9.11e-31
+Thompson_cross = 6.65e-29
+Sun_density = 150000
+Sun_radius = 696000000
+
+Mean_Free = (mass_proton + mass_electron)/(Thompson_cross*Sun_density*np.sqrt(2))
+
+time_step= 10**-13 # Used this specifically in order for the path length to be < Mean free Path
+path_length = (3e8)*time_step
+
+Probability = 1-np.exp(-path_length/Mean_Free) # Probability of the photon colliding
+
+
+def Random_walk():
+    x = 0   # Start at origin (0,0)
+    y = 0
+    #x2= 0
+    #y2= 0
+    #distance=0
+    N = 9000
+    m=0 # This is a counter I have set up for the number of collisions
+
+    for i in range(1,N+1): 
+        prand = rnd(N+1)    # Randomly generated probability
+
+        if prand[i] < Probability:  # If my prand is less than the probability
+                                # of collision, the photon collides and changes
+                                # direction
+            x += Mean_Free*np.cos(2*np.pi*prand)    
+            y += Mean_Free*np.sin(2*np.pi*prand)    
+            m = m + 1  # Everytime a collision occurs 1 is added to my collision counter
+
+
+            distance = np.sqrt(x**2 + y**2) # Final distance the photon covers
+
+            if np.sum(distance) >= Sun_radius:   # if the distance the photon travels
+                return (distance)
+                break
+
+                                      #return distance 
+                                      # is greater than the Radius of the Sun,
+                                      # the for loop stops, meaning the 
+                                        #photon escaped
+       #else:
+          #x2 += Mean_Free*np.cos(2*np.pi*prand)    
+          #y2 += Mean_Free*np.sin(2*np.pi*prand)
+
+          #distance2 = np.sqrt(x2**2 + y2**2)
+
+          #distance3 = sum(distance) + sum(distance2)
+
+
+    #the program stock the distances into a list only if is higher than the sun radius. After that, the distance is multiply by the time and report that result.
+    
+    time_total = ((sum(distance))/(time_step))/3e8
+    dis_total = (sum(distance))/(time_step)
+    print("distancia recorrida : ", str(format(dis_total,'.2E'))," metros")
+    print("colisiones: ", m) 
+    print(format(time_total,'.2E'), " segundos")
+    print(format(time_total*3.17e-8,'.2E'), " años")  
+    return x,y,distance
+
+
+
+
+#time_total = distance * path_length 
+
+#print(time_total)
+x,y,d = Random_walk()
+plt.plot(x,y, '--')
+plt.plot(x[-1], y[-1], 'ro')
+plt.show()
